@@ -17,67 +17,66 @@ class App extends Component {
 
 
   //when the card has been clicked, check to see if it has been clicked before.
-  clickHandler = (id) => { 
-    //if statement //do a check to see if this is the first click or not
-    let match = this.state.friends.find(function(b) {
-      return b.id === id
+  clickHandler = (id) => {
+    const newFriends = [...this.state.friends];
+    newFriends.forEach((friend, index) => {
+      if (friend.id === id) {
+
+        console.log(friend.id, id, friend.clicked);
+        //if card has been clicked, the game ends. shuffle cards and reset the score.
+        if (friend.clicked) {
+          console.log("game over");
+          this.setState({
+            friends: this.shuffleCards(friends),
+            score: 0
+          });
+        } else  {
+          newFriends[index].clicked = true;
+          console.log("has not been clicked")
+          this.setState({
+            friends: this.shuffleCards(newFriends),
+            score: this.state.score + 1
+          })
+        }
+
+      }
     });
+
+    //if statement //do a check to see if this is the first click or not
+
     console.log(this.state.friends)
-    console.log("im in clickHandler", id, match)
+    console.log("im in clickHandler", id)
     //if char is -1 then it has not been clicked before, else then it has been clicked. game over.
 
   }
 
-  
 
-  correctGuess = (id) => {
-
+  shuffleCards = (data) => {
+    let i = data.length - 1;
+    while (i > 0) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = data[i];
+      data[i] = data[j];
+      data[j] = temp;
+      i--;
+    }
+    return data;
   }
 
-  incorrectGuess = () => {
-
-  }
-
-  shuffleCards = () => {
-    //spread this.state.friends
-    let newFriends = [...this.state.friends]
-    //shuffle new friends
-    //send new friends back
-    this.setState({friends:newFriends})
-  }
-
-  resetScore = () => {
-
-  }
-
-
-  //if card has been clicked, the game ends. shuffle cards and reset the score.
-
-  //if the card has not been clicked, add point, then shuffle the cards. 
-
-  // take a copy of state, then randomize the cards. make function shuffle cards.
-
-
-
-
-  // removeFriend = id => {
-  //   // Filter this.state.friends for friends with an id not equal to the id being removed
-  //   const friends = this.state.friends.filter(friend => friend.id !== id);
-  //   // Set this.state.friends equal to the new friends array
-  //   this.setState({ friends });
-  // };
 
   // Map over this.state.friends and render a FriendCard component for each friend object
   render() {
     return (
       <Wrapper>
-        <Title>Friends List</Title>
+        <Title>Your Score:
+          {this.state.score}
+        </Title>
         {this.state.friends.map(friend => (
           <FriendCard
-            clicked = {this.clickHandler} 
+            clicked={this.clickHandler}
             id={friend.id}
             key={friend.id}
-            name={friend.name}s
+            name={friend.name} s
             image={friend.image}
             occupation={friend.occupation}
             location={friend.location}
